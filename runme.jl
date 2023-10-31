@@ -20,45 +20,16 @@ rewards[(5,6)] = charging_reward    # charging station square
 
 # terminal states -
 absorbing_state_set = Set{Tuple{Int,Int}}()
-# push!(absorbing_state_set, (5,5));
-# push!(absorbing_state_set, (6,5));
-# push!(absorbing_state_set, (6,6));
+push!(absorbing_state_set, (5,5));
+push!(absorbing_state_set, (6,5));
+push!(absorbing_state_set, (6,6));
 push!(absorbing_state_set, (5,6));
 
-
-
-# tmp = Dict{Tuple{Int,Int}, Tuple{Int,Int}}()
-# for s ∈ 𝒮
-
-#     world = build(MyRectangularGridWorldModel, 
-#     (nrows = number_of_rows, ncols = number_of_cols, rewards = rewards, terminal_states = absorbing_state_set));
-
-#     start_position = world.coordinates[s];   
-#     start_node = build(MyMCTSTreeNodeModel, 
-#         (position = start_position, score = 0.0, timesvisited = 0, parent = nothing, children = nothing, action = nothing)) |> x->  expansion(world, x);
-
-#     # add root node to the treenodes dictionary -
-#     world.treenodes[start_position] = start_node;
-
-#     # run the simulation -
-#     number_of_iterations = 1000;
-#     for i ∈ 1:number_of_iterations
-#         candidate = traversal(world, start_node);
-#         score = rollout(world, candidate);
-#         backpropagate(candidate, score);
-#     end
-
-#     # index best kid -
-#     index_best_kid = [child.score for child in start_node.children ] |> argmax;
-
-#     # store -
-#     tmp[start_position] = start_node.children[index_best_kid].position;
-# end
 
 world = build(MyRectangularGridWorldModel, 
         (nrows = number_of_rows, ncols = number_of_cols, rewards = rewards, terminal_states = absorbing_state_set));
 
-start_position = (3,3);
+start_position = (2,7);
 start_node = build(MyMCTSTreeNodeModel, 
     (position = start_position, score = 0.0, timesvisited = 0, parent = nothing, children = nothing, action = nothing)) |> x-> expansion(world, x);
 
@@ -66,11 +37,11 @@ start_node = build(MyMCTSTreeNodeModel,
 world.treenodes[start_position] = start_node;
 
 # run the simulation -
-number_of_iterations = 5000;
+number_of_iterations = 10;
 for i ∈ 1:number_of_iterations
     candidate = traversal(world, start_node);
     score = rollout(world, candidate);
     backpropagate(candidate, score);
 end
 
-next_state = UCB1.(start_node.children) |> argmax |> x-> start_node.children[x].position;
+next_state = [UCB1(node) for node ∈ start_node.children] |> argmax |> x-> start_node.children[x].position;

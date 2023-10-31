@@ -11,7 +11,7 @@ function build(modeltype::Type{MyRectangularGridWorldModel}, data::NamedTuple)::
     nrows = data[:nrows]
     ncols = data[:ncols]
     rewards = data[:rewards]
-    defaultreward = haskey(data, :defaultreward) == false ? -10.0 : data[:defaultreward]
+    defaultreward = haskey(data, :defaultreward) == false ? -20.0 : data[:defaultreward]
 
     # setup storage
     rewards_dict = Dict{Int,Float64}()
